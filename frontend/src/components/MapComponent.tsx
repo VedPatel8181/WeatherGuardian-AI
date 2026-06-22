@@ -9,8 +9,8 @@ interface MapProps {
 }
 
 export default function MapComponent({ 
-  center = [23.0225, 72.5714], // Default to Ahmedabad, Gujarat
-  zoom = 12, 
+  center = [20.5937, 78.9629], // Default to center of India
+  zoom = 5, 
   markers = [], 
   routes = [] 
 }: MapProps) {
@@ -114,7 +114,7 @@ export default function MapComponent({
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
-          Loading interactive Gujarat map...
+          Loading interactive India map...
         </div>
       )}
       <div ref={mapRef} className="w-full h-full z-10" style={{ minHeight: '350px' }} />

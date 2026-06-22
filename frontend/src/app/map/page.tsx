@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import MapComponent from '../../components/MapComponent';
 
-export default function GujaratMapPage() {
+export default function IndiaMapPage() {
   const [shelters, setShelters] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([23.0225, 72.5714]);
-  const [mapZoom, setMapZoom] = useState(12);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([20.5937, 78.9629]);
+  const [mapZoom, setMapZoom] = useState(5);
 
   useEffect(() => {
     fetch('http://localhost:3001/api/shelters')
@@ -58,8 +58,8 @@ export default function GujaratMapPage() {
   return (
     <div className="space-y-6 h-full flex flex-col">
       <div>
-        <h2 className="text-3xl font-bold text-white mb-2">Gujarat Map Tracker</h2>
-        <p className="text-slate-400">Real-time geographical situational awareness for Ahmedabad division.</p>
+        <h2 className="text-3xl font-bold text-white mb-2">India Map Tracker</h2>
+        <p className="text-slate-400">Real-time geographical situational awareness for Indian divisions.</p>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[500px]">
@@ -74,13 +74,27 @@ export default function GujaratMapPage() {
               <div className="space-y-3">
                 <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-red-400 uppercase tracking-widest">Active Incident</span>
+                    <span className="text-xs font-bold text-red-400 uppercase tracking-widest">Active Incident (Gujarat)</span>
                     <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                   </div>
                   <h4 className="font-bold text-white mt-1 text-sm">Sabarmati Riverfront</h4>
                   <p className="text-xs text-slate-300 mt-1">Water level critical. High risk zone.</p>
                   <button 
                     onClick={() => focusLocation(23.0485, 72.5723)} 
+                    className="text-xs text-red-400 underline mt-2 hover:text-red-300 block">
+                    Locate on Map
+                  </button>
+                </div>
+
+                <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-red-400 uppercase tracking-widest">Active Incident (Mumbai)</span>
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                  </div>
+                  <h4 className="font-bold text-white mt-1 text-sm">Dharavi Flooding</h4>
+                  <p className="text-xs text-slate-300 mt-1">Heavy rains causing localized flash floods.</p>
+                  <button 
+                    onClick={() => focusLocation(19.0380, 72.8538)} 
                     className="text-xs text-red-400 underline mt-2 hover:text-red-300 block">
                     Locate on Map
                   </button>
