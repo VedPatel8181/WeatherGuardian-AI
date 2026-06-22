@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js build outputs
+.next/
+out/
+build/
+
+# Python Virtual Environment and caches
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+!weather_guardian.db # We can keep the seed db if they want, but usually db files are ignored. Let's keep it or ignore it. Since there's weather_guardian.db in backend with seeded data, let's keep it tracked so they get the seeded database out of the box!
+
+# Production / local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE / OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
