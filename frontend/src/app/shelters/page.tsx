@@ -39,7 +39,7 @@ export default function SheltersPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold text-white mb-2">Shelter Finder</h2>
-        <p className="text-slate-400">Offline database of safehouses and medical centers in Ahmedabad, Gujarat.</p>
+        <p className="text-slate-400">Offline database of safehouses and medical centers across major cities in India.</p>
       </div>
 
       {loading ? (
@@ -74,8 +74,8 @@ export default function SheltersPage() {
           {/* Map Pane */}
           <div className="lg:col-span-1 h-[600px]">
             <MapComponent 
-              center={[23.0225, 72.5714]} 
-              zoom={11} 
+              center={[20.5937, 78.9629]} 
+              zoom={5} 
               markers={mapMarkers} 
             />
           </div>
