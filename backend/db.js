@@ -10,22 +10,44 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.log('Connected to the SQLite database.');
         
         // Initialize tables
-        // Initialize tables
-            db.serialize(() => {
-                // Drop table to ensure new data is seeded
-                db.run("DROP TABLE IF EXISTS shelters");
-                
-                db.run(`CREATE TABLE IF NOT EXISTS shelters (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    lat REAL NOT NULL,
-                    lng REAL NOT NULL,
-                    capacity INTEGER,
-                    occupancy INTEGER DEFAULT 0,
-                    facilities TEXT
-                )`);
+        db.serialize(() => {
+            // Drop tables to ensure new data is seeded
+            db.run("DROP TABLE IF EXISTS shelters");
+            db.run("DROP TABLE IF EXISTS drones");
+            db.run("DROP TABLE IF EXISTS alerts");
+            
+            db.run(`CREATE TABLE IF NOT EXISTS shelters (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                lat REAL NOT NULL,
+                lng REAL NOT NULL,
+                capacity INTEGER,
+                occupancy INTEGER DEFAULT 0,
+                facilities TEXT
+            )`);
 
-                const stmt = db.prepare("INSERT INTO shelters (name, lat, lng, capacity, occupancy, facilities) VALUES (?, ?, ?, ?, ?, ?)");
+            db.run(`CREATE TABLE IF NOT EXISTS drones (
+                id TEXT PRIMARY KEY,
+                status TEXT NOT NULL,
+                target TEXT,
+                battery INTEGER
+            )`);
+
+            db.run(`CREATE TABLE IF NOT EXISTS alerts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                type TEXT NOT NULL,
+                message TEXT NOT NULL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`);
+
+            // Seed Drones
+            const droneStmt = db.prepare("INSERT INTO drones (id, status, target, battery) VALUES (?, ?, ?, ?)");
+            droneStmt.run("DRN-01", "Idle", "-", 100);
+            droneStmt.run("DRN-02", "Idle", "-", 100);
+            droneStmt.run("DRN-03", "Idle", "-", 100);
+            droneStmt.finalize();
+
+            const stmt = db.prepare("INSERT INTO shelters (name, lat, lng, capacity, occupancy, facilities) VALUES (?, ?, ?, ?, ?, ?)");
                 
                 // Ahmedabad
                 stmt.run("Sardar Patel Stadium Shelter (Ahmedabad)", 23.0898, 72.5802, 500, 120, "Water, First Aid, Beds, Power backup");

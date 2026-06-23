@@ -1,10 +1,90 @@
+'use client';
+import { useEffect, useState } from 'react';
+
+interface Alert {
+  id: number;
+  type: string;
+  message: string;
+  timestamp: string;
+}
+
+interface Shelter {
+  id: number;
+  name: string;
+  lat: number;
+  lng: number;
+  capacity: number;
+  occupancy: number;
+  facilities: string;
+}
+
 export default function Home() {
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [shelters, setShelters] = useState<Shelter[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [alertsRes, sheltersRes] = await Promise.all([
+          fetch('http://localhost:3001/api/alerts'),
+          fetch('http://localhost:3001/api/shelters')
+        ]);
+        const alertsData = await alertsRes.json();
+        const sheltersData = await sheltersRes.json();
+        setAlerts(alertsData);
+        setShelters(sheltersData);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+      }
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Compute stats
+  const totalOccupancy = shelters.reduce((acc, s) => acc + s.occupancy, 0);
+  const totalCapacity = shelters.reduce((acc, s) => acc + s.capacity, 0);
+  const avgCapacityPercent = totalCapacity > 0 ? Math.round((totalOccupancy / totalCapacity) * 100) : 0;
+
+  // Filter for evacuation orders and warnings
+  const criticalAlerts = alerts.filter(a => a.type !== 'All Clear');
+  const latestAlert = criticalAlerts.length > 0 ? criticalAlerts[0] : null;
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight text-white">Area Overview</h2>
-        <p className="text-slate-400 mt-1">Real-time risk assessment and system status.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-white">Area Overview</h2>
+          <p className="text-slate-400 mt-1">Real-time risk assessment and system status.</p>
+        </div>
+        {latestAlert && (
+          <span className="flex h-3 w-3 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+          </span>
+        )}
       </div>
+
+      {/* Active Broadcast Warning Banner */}
+      {latestAlert && (
+        <div className={`p-4 rounded-xl border animate-pulse flex items-center justify-between gap-4 ${
+          latestAlert.type === 'Evacuation Order' 
+            ? 'bg-red-950/70 border-red-500/50 text-red-200' 
+            : 'bg-amber-950/70 border-amber-500/50 text-amber-200'
+        }`}>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🚨</span>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider block">
+                {latestAlert.type}: Active Emergency Broadcast
+              </span>
+              <p className="text-sm font-medium mt-0.5">{latestAlert.message}</p>
+            </div>
+          </div>
+          <span className="text-xs font-mono opacity-65">{new Date(latestAlert.timestamp).toLocaleTimeString()}</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Risk Card 1 */}
@@ -35,10 +115,10 @@ export default function Home() {
         <div className="bg-slate-800/50 border border-slate-700 p-5 rounded-2xl">
           <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Shelter Capacity</h3>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-4xl font-bold text-white">45%</span>
+            <span className="text-4xl font-bold text-white">{avgCapacityPercent}%</span>
           </div>
           <div className="w-full bg-slate-700 rounded-full h-1.5 mt-3">
-            <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '45%' }}></div>
+            <div className="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style={{ width: `${avgCapacityPercent}%` }}></div>
           </div>
         </div>
 
